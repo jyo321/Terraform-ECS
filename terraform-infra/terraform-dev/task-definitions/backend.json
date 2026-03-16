@@ -1,0 +1,25 @@
+[
+  {
+    "name": "test-backend-dev",
+    "image": "${image_url}",
+    "cpu": 0,
+    "essential": true,
+
+   "portMappings": [
+      {
+        "containerPort": 8000,
+        "hostPort": 8000,
+        "protocol": "tcp"
+      }
+    ],
+    "environment": [],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "/ecs/backend-dev",
+        "awslogs-region": "us-east-1",
+        "awslogs-stream-prefix": "ecs"
+      }
+    }
+  }
+]
