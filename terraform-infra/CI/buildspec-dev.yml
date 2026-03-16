@@ -1,0 +1,26 @@
+version: 0.2
+
+phases:
+
+  install:
+    commands:
+      - echo Installing Terraform
+      - curl -O https://releases.hashicorp.com/terraform/1.6.6/terraform_1.6.6_linux_amd64.zip
+      - unzip terraform_1.6.6_linux_amd64.zip
+      - mv terraform /usr/local/bin/
+
+  pre_build:
+    commands:
+      - cd terraform-dev
+      - terraform init
+      - terraform workspace select dev || terraform workspace new dev
+
+  build:
+    commands:
+      - terraform fmt -check
+      - terraform validate
+      - terraform plan -out=tfplan
+
+  post_build:
+    commands:
+      - terraform apply -auto-approve tfplan
