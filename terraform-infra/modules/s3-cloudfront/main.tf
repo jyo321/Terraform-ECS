@@ -34,7 +34,7 @@ resource "aws_s3_bucket_versioning" "main" {
 # S3 Bucket Server-Side Encryption
 # -------------------------
 resource "aws_s3_bucket_server_side_encryption_configuration" "main" {
-  
+
   bucket = aws_s3_bucket.main.id
 
   rule {
@@ -92,9 +92,9 @@ resource "aws_s3_bucket_policy" "main" {
 # CloudFront Distribution
 # -------------------------
 resource "aws_cloudfront_distribution" "main" {
-  enabled             = var.cloudfront_enabled
+  enabled = var.cloudfront_enabled
   comment = var.cloudfront_distribution_name
-  
+
   origin {
     domain_name = aws_s3_bucket.main.bucket_regional_domain_name
     origin_id   = var.cloudfront_origin_id
@@ -108,7 +108,7 @@ resource "aws_cloudfront_distribution" "main" {
   default_cache_behavior {
     allowed_methods        = var.allowed_methods
     cached_methods         = var.cached_methods
-    target_origin_id = var.cloudfront_origin_id
+    target_origin_id       = var.cloudfront_origin_id
     viewer_protocol_policy = var.viewer_protocol_policy
 
     forwarded_values {
@@ -144,16 +144,16 @@ resource "aws_cloudfront_distribution" "main" {
 
   # SSL/TLS Certificate
   #viewer_certificate {
-   # cloudfront_default_certificate = var.use_default_certificate
-    #acm_certificate_arn            = var.acm_certificate_arn
-   # ssl_support_method             = var.ssl_support_method
-    #minimum_protocol_version       = var.minimum_protocol_version
- #}
+  # cloudfront_default_certificate = var.use_default_certificate
+  #acm_certificate_arn            = var.acm_certificate_arn
+  # ssl_support_method             = var.ssl_support_method
+  #minimum_protocol_version       = var.minimum_protocol_version
+  #}
 
- viewer_certificate {
+  viewer_certificate {
     cloudfront_default_certificate = true
   }
-  
+
   tags = var.common_tags
 
   depends_on = [aws_s3_bucket.main]

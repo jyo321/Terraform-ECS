@@ -29,8 +29,8 @@ module "vpc" {
 module "ecs" {
   source = "../modules/ecs"
 
-  environment             = local.environment
-  project_name            = var.project_name
+  environment  = local.environment
+  project_name = var.project_name
   # VPC Configuration
   vpc_id                 = module.vpc.vpc_id
   alb_subnet_ids         = module.vpc.public_subnet_ids
@@ -43,15 +43,15 @@ module "ecs" {
   ecs_security_group_description = "Security group for ${var.project_name} ${local.environment} ECS Service"
 
   # ALB Configuration
-  alb_name                  = "${var.project_name}-${local.environment}"
+  alb_name = "${var.project_name}-${local.environment}"
   #alb_access_logs_bucket_name = "${var.project_name}-${local.environment}-alb-access-logs-tf"
 
   # ECS Cluster Configuration
   ecs_cluster_name = "${var.project_name}-${local.environment}"
- 
+
   # IAM Role Configuration
   ecs_task_execution_role_name = "${var.project_name}-${local.environment}-ecs-task-execution-role"
- 
+
   # Services Configuration
   services = var.services
 
@@ -67,13 +67,13 @@ module "ecs" {
 module "s3_cloudfront" {
   source = "../modules/s3-cloudfront"
 
-  bucket_name                 = var.bucket_name
-  oai_comment                 = var.oai_comment
-  cloudfront_origin_id        = var.cloudfront_origin_id
+  bucket_name                  = var.bucket_name
+  oai_comment                  = var.oai_comment
+  cloudfront_origin_id         = var.cloudfront_origin_id
   cloudfront_distribution_name = var.cloudfront_distribution_name
   # cloudfront_aliases          = var.cloudfront_aliases
   # acm_certificate_arn         = var.certificate_arn
   #public_bucket_name          = "${var.project_name}-${local.environment}-profiles"
-  common_tags                 = var.common_tags
+  common_tags = var.common_tags
 }
 

@@ -10,7 +10,7 @@ phases:
 
   pre_build:
     commands:
-      - cd terraform-qa
+      - cd terraform-infra/terraform-qa
       - terraform init
       - terraform workspace select qa || terraform workspace new qa
 

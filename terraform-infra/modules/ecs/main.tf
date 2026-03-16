@@ -71,11 +71,11 @@ resource "aws_security_group" "ecs_service" {
 # Application Load Balancer
 # -------------------------
 resource "aws_lb" "main" {
-  name               = var.alb_name
-  load_balancer_type = var.load_balancer_type
-  internal           = var.alb_internal
-  subnets            = var.alb_subnet_ids
-  security_groups    = [aws_security_group.alb.id]
+  name                       = var.alb_name
+  load_balancer_type         = var.load_balancer_type
+  internal                   = var.alb_internal
+  subnets                    = var.alb_subnet_ids
+  security_groups            = [aws_security_group.alb.id]
   enable_deletion_protection = var.enable_deletion_protection
 
   tags = var.common_tags
@@ -95,8 +95,8 @@ resource "aws_lb_target_group" "services" {
   vpc_id      = var.vpc_id
 
   health_check {
-    path = lookup(each.value, "health_check_path", var.health_check_path)
-    matcher             = var.health_check_matcher
+    path    = lookup(each.value, "health_check_path", var.health_check_path)
+    matcher = var.health_check_matcher
   }
 
   dynamic "stickiness" {
@@ -184,7 +184,7 @@ resource "aws_ecs_cluster" "main" {
   lifecycle {
     prevent_destroy = false
     ignore_changes = [
-      setting 
+      setting
     ]
   }
 
@@ -235,7 +235,7 @@ resource "aws_iam_role" "ecs_task_role" {
 
 resource "aws_iam_role_policy_attachment" "ecs_task_role_policies" {
   for_each = toset(var.ecs_task_execution_policy_arns) # Using the same variable here
- 
+
   role       = aws_iam_role.ecs_task_role.name
   policy_arn = each.value
 }
@@ -298,7 +298,7 @@ resource "aws_ecs_task_definition" "services" {
   cpu                      = each.value.task_cpu
   memory                   = each.value.task_memory
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
-  task_role_arn = aws_iam_role.ecs_task_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_role.arn
   container_definitions = replace(
     file("${path.root}/${each.value.task_definition_file}"),
     "$${image_url}",
@@ -317,9 +317,9 @@ resource "aws_ecs_task_definition" "services" {
     create_before_destroy = true
     prevent_destroy       = false
     ignore_changes = [
-      container_definitions,  
-      cpu,                    
-      memory                
+      container_definitions,
+      cpu,
+      memory
     ]
   }
 
@@ -338,14 +338,14 @@ resource "aws_ecs_task_definition" "services" {
 resource "aws_ecs_service" "services" {
   for_each = var.services
 
-  name            = "${var.ecs_cluster_name}-${each.key}"
-  cluster         = aws_ecs_cluster.main.id
-  task_definition = aws_ecs_task_definition.services[each.key].arn
-  desired_count   = each.value.desired_count
-  launch_type     = var.launch_type
+  name                              = "${var.ecs_cluster_name}-${each.key}"
+  cluster                           = aws_ecs_cluster.main.id
+  task_definition                   = aws_ecs_task_definition.services[each.key].arn
+  desired_count                     = each.value.desired_count
+  launch_type                       = var.launch_type
   health_check_grace_period_seconds = var.health_check_grace_period_seconds
   enable_execute_command            = var.enable_execute_command
-  
+
   network_configuration {
     subnets          = var.ecs_service_subnet_ids
     security_groups  = [aws_security_group.ecs_service.id]
@@ -367,8 +367,8 @@ resource "aws_ecs_service" "services" {
   }
 
   lifecycle {
-  create_before_destroy = false
- }
+    create_before_destroy = false
+  }
 
   tags = merge(
     var.common_tags,
@@ -379,26 +379,26 @@ resource "aws_ecs_service" "services" {
   )
 
   depends_on = [
-  aws_lb_listener.http,
-  aws_lb_target_group.services
-]
-}  
+    aws_lb_listener.http,
+    aws_lb_target_group.services
+  ]
+}
 
 # ----- ECS Service Auto Scaling Target -----
 resource "aws_appautoscaling_target" "ecs" {
   for_each = var.services
 
-  service_namespace   = "ecs"
-  scalable_dimension  = "ecs:service:DesiredCount"
-  resource_id         = "service/${aws_ecs_cluster.main.name}/${aws_ecs_service.services[each.key].name}"
+  service_namespace  = "ecs"
+  scalable_dimension = "ecs:service:DesiredCount"
+  resource_id        = "service/${aws_ecs_cluster.main.name}/${aws_ecs_service.services[each.key].name}"
 
-  min_capacity        = lookup(each.value, "min_capacity", 1)
-  max_capacity        = lookup(each.value, "max_capacity", 1)
+  min_capacity = lookup(each.value, "min_capacity", 1)
+  max_capacity = lookup(each.value, "max_capacity", 1)
 }
 
 # ----- ECS Service Auto Scaling Policy (CPU 70%) -----
 resource "aws_appautoscaling_policy" "cpu_scaling" {
-  for_each           = var.services
+  for_each = var.services
 
   name               = "${each.key}-cpu-scaling"
   policy_type        = "TargetTrackingScaling"
