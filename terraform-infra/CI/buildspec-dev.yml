@@ -11,7 +11,7 @@ phases:
 
   pre_build:
     commands:
-      - cd terraform-dev
+      - cd terraform-infra/terraform-dev
       - terraform init
       - terraform workspace select dev || terraform workspace new dev
 
