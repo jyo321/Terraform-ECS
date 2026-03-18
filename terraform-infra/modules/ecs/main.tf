@@ -89,7 +89,9 @@ resource "aws_lb_target_group" "services" {
   for_each = var.services
 
   name        = "${var.alb_name}-${each.key}-tg"
-  port        = each.value.container_port
+  port        = var.target_group_port
+
+
   protocol    = var.target_group_protocol
   target_type = var.target_type
   vpc_id      = var.vpc_id
@@ -355,7 +357,7 @@ resource "aws_ecs_service" "services" {
   load_balancer {
     target_group_arn = aws_lb_target_group.services[each.key].arn
     container_name   = each.value.container_name
-    container_port   = each.value.container_port
+    container_port   = var.container_port
   }
 
   dynamic "deployment_circuit_breaker" {
