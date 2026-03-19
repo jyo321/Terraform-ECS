@@ -20,7 +20,7 @@ services = {
     task_definition_file   = "task-definitions/backend.json"
     desired_count          = 1
     container_name         = "test-backend-dev"
-    container_port         = 8000
+    container_port         = 8080
     health_check_path      = "/health"
     # Autoscaling:
     min_capacity     = 1
