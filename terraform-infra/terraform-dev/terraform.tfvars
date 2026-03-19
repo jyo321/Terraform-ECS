@@ -14,14 +14,14 @@ availability_zone_2     = "us-east-1b"
 services = {
   backend = {
     listener_rule_priority = 100
-    path_patterns          = ["/health/*"]
+    path_patterns          = ["/*"]
     task_cpu               = "256"
     task_memory            = "512"
     task_definition_file   = "task-definitions/backend.json"
     desired_count          = 1
     container_name         = "test-backend-dev"
-    container_port         = 8080
-    health_check_path      = "/health"
+    container_port         = 8000
+    health_check_path      = "/api/hello"
     # Autoscaling:
     min_capacity     = 1
     max_capacity     = 2
