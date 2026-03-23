@@ -21,7 +21,7 @@ services = {
     desired_count          = 1
     container_name         = "test-backend-dev"
     container_port         = 8000
-    health_check_path      = "/api/hello"
+    health_check_path      = "/api/message"
     # Autoscaling:
     min_capacity     = 1
     max_capacity     = 2

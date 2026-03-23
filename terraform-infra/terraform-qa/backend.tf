@@ -1,8 +1,8 @@
 terraform {
   backend "s3" {
-    bucket               = "demo1-terraform-qa-state"
+    bucket               = "demo-terraform-qa-state"
     key                  = "terraform.tfstate"
-    region               = "us-east-1"
+    region               = "us-east-2"
     encrypt              = true
     workspace_key_prefix = "workspaces"
   }
